@@ -1,0 +1,22 @@
+Thank you for installing the {{ .Chart.Name }}!
+
+{{- if .Values.ingress.enabled }}
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+  ####################################################################
+  View your site via browser if you have updated your /etc/hosts file:
+  ####################################################################
+  
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  
+  ########
+  Via CLI:
+  ########
+  ## Print page contents:
+  curl -Lk -H 'Host: {{ $host.host }}' http://localhost
+
+  ## HTTP Status Reply:
+  curl -ILk -H 'Host: {{ $host.host }}' http://localhost
+  {{- end }}
+{{- end }}
+{{- end }}

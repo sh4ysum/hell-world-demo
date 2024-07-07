@@ -1,0 +1,87 @@
+#################################
+## "Hello World" Demo App
+#################################
+replicaCount: 1 ## HPA TAKES OVER
+
+image:
+  repository: sh4ysum/hello-world
+  pullPolicy: IfNotPresent
+  ## OVERRIDES THE IMAGE TAG WHOSE DEFAULT IS THE CHART APPVERSION
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  {}
+
+securityContext:
+  {}
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: enabled
+  className: "nginx"
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - host: hello-world-demo.local ## LOCAL HOST FILE TO POINT TO EXTERNAL IP FROM NGINX INGRESS CONTROLLER
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources:
+  {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  # targetMemoryUtilizationPercentage: 80 ## MEMORY
+  targetCPUUtilizationPercentage: 80 ## CPU
+
+volumes: []
+volumeMounts: []
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+
+#################################
+## NGINX Ingress Controller
+#################################
+ingress-nginx:
+  fullnameOverride: ingress-nginx
+  namespaceOverride: ingress
+  controller:
+    replicaCount: 2
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+    minAvailable: 2 ## PODDISRUPTION BUDGET
+    service:
+      type: LoadBalancer

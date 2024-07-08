@@ -18,7 +18,7 @@ This is a sample runbook for resolving a monitoring alert.
 
 Sample diagram:
 
-![Sample Architecture](../imgs/prod_env_example.png "Sample Architecture")
+![Sample Architecture](../../imgs/prod_env_example.png "Sample Architecture")
 
 ## Contributing Systems & Dependencies
 

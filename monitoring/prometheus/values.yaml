@@ -22,10 +22,30 @@ server:
 
 ## ALERTS
 serverFiles:
-  ## Alerts configuration
   ## Ref: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
   alerting_rules.yml:
     groups:
+      - name: container_alerts
+        rules:
+        ## CRITICAL
+        - alert: RateOfDroppedPackets
+          expr: rate(container_network_receive_packets_dropped_total[1m]) > 0
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: Rate of dropped packets is greater than zero.
+            description: "Rate dropped packets is greater than zero.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+        ## WARNING
+        - alert: ContainerHighCpuRate
+          expr: (sum by (instance) (avg by (mode, instance) (rate(container_cpu_system_seconds_total{mode!="idle"}[2m])))) > 0.8
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: Container high CPU load (instance {{ $labels.instance }})
+            description: "Container CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"           
+
       - name: k8s_alerts
         rules:
         ## CRITICAL

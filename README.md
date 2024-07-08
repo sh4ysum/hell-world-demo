@@ -134,6 +134,10 @@ Because we did not update anything within the `values.yaml` we will reuse the va
 
 - Validate the site is working
   ```bash
+  helm test hello-world-demo -n hello-world
+  ```
+
+  ```bash
   curl -ILk -H 'Host:hello-world-demo.local' http://localhost
   ```
 
